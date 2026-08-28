@@ -1,0 +1,37 @@
+{
+  "name": "kototoi-do",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "embed": "node scripts/embed.mjs",
+    "calibrate": "node scripts/calibrate.mjs",
+    "pack": "node scripts/pack-index.mjs",
+    "verify": "node scripts/verify-output.mjs",
+    "prune": "python scripts/prune_model.py --ascii-max 2",
+    "keep-extra": "node scripts/keep-extra.mjs",
+    "vendor": "node scripts/vendor-runtime.mjs",
+    "verify:prune": "node scripts/verify-prune.mjs",
+    "fetch:model": "node scripts/fetch-model.mjs"
+  },
+  "dependencies": {
+    "next": "^15.5.24",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "@huggingface/transformers": "^3.7.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "playwright": "^1.62.1",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.8"
+  }
+}

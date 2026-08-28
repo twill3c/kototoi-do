@@ -1,0 +1,158 @@
+/*
+  言問堂。古書店なので、紙と墨と、棚の木口の色だけで作る。
+  写真は一枚も使わない(SPEC N-05)。図版はすべて SVG。
+  書体も外部から取らない(N-02)— 端末に入っている明朝を借りる。
+*/
+:root {
+  --paper: #f6f2e9;
+  --paper-deep: #ece6d8;
+  --sumi: #221f1b;
+  --sumi-soft: #4a443c;
+  --muted: #857c6e;
+  --line: #d9d1be;
+  --enji: #8c3a3a;
+  --ai: #2f4858;
+  --wrap: 62rem;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  padding-bottom: 5.5rem;
+  background: var(--paper);
+  color: var(--sumi);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, "Noto Serif JP", "Source Han Serif JP", serif;
+  font-size: 16px;
+  line-height: 1.9;
+  text-rendering: optimizeLegibility;
+}
+
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 1.5rem; }
+
+a { color: var(--ai); text-underline-offset: 0.2em; }
+a:hover { color: var(--enji); }
+
+/* ---- 看板 ---- */
+.masthead {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.masthead .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 1rem;
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+}
+.masthead__name {
+  font-size: 1.5rem;
+  letter-spacing: 0.28em;
+  color: var(--sumi);
+  text-decoration: none;
+  font-weight: 600;
+}
+.masthead__reading { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.18em; }
+.masthead nav { margin-left: auto; display: flex; flex-wrap: wrap; gap: 0 1.1rem; font-size: 0.86rem; }
+.masthead nav a { color: var(--sumi-soft); text-decoration: none; }
+.masthead nav a:hover { color: var(--enji); }
+
+main { padding: 2.5rem 0 3rem; }
+
+h1 { font-size: 1.6rem; letter-spacing: 0.14em; font-weight: 600; margin: 0 0 0.4rem; }
+h2 {
+  font-size: 1.08rem; letter-spacing: 0.16em; font-weight: 600;
+  margin: 3rem 0 1rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--line);
+}
+h3 { font-size: 0.98rem; letter-spacing: 0.1em; margin: 1.8rem 0 0.5rem; }
+p { margin: 0 0 1.1rem; }
+
+.lead { color: var(--sumi-soft); }
+.note { font-size: 0.82rem; color: var(--muted); line-height: 1.8; }
+.enji { color: var(--enji); }
+
+/* ---- 言問いの窓 ---- */
+.kotodoi { margin: 2rem 0 0; }
+.kotodoi__form { display: flex; gap: 0; border: 1px solid var(--sumi-soft); background: #fffdf7; }
+.kotodoi__form input {
+  flex: 1; min-width: 0; border: 0; background: transparent; padding: 0.85rem 1rem;
+  font: inherit; font-size: 1rem; color: var(--sumi);
+}
+.kotodoi__form input:focus { outline: 2px solid var(--enji); outline-offset: -2px; }
+.kotodoi__form button {
+  border: 0; border-left: 1px solid var(--line); background: var(--sumi); color: var(--paper);
+  font: inherit; font-size: 0.9rem; letter-spacing: 0.2em; padding: 0 1.4rem; cursor: pointer;
+}
+.kotodoi__form button:disabled { background: var(--muted); cursor: progress; }
+
+.kotodoi__examples { margin: 0.7rem 0 0; font-size: 0.82rem; color: var(--muted); }
+.kotodoi__examples button {
+  border: 1px solid var(--line); background: var(--paper-deep); color: var(--sumi-soft);
+  font: inherit; font-size: 0.8rem; padding: 0.15rem 0.7rem; margin: 0 0.35rem 0.4rem 0;
+  border-radius: 999px; cursor: pointer;
+}
+.kotodoi__examples button:hover { border-color: var(--enji); color: var(--enji); }
+
+.kotodoi__status {
+  margin-top: 1.2rem; padding: 0.9rem 1rem; border-left: 3px solid var(--line);
+  background: var(--paper-deep); font-size: 0.86rem; color: var(--sumi-soft);
+}
+.kotodoi__bar { height: 3px; background: var(--line); margin-top: 0.6rem; }
+.kotodoi__bar span { display: block; height: 100%; background: var(--enji); transition: width 0.2s; }
+
+/* ---- 引き当てた蔵書 ---- */
+.hits { list-style: none; margin: 2rem 0 0; padding: 0; }
+.hit { border-top: 1px solid var(--line); padding: 1.2rem 0; display: grid; grid-template-columns: 2.6rem 1fr; gap: 0 0.9rem; }
+.hit:last-child { border-bottom: 1px solid var(--line); }
+.hit__rank { font-size: 1.15rem; color: var(--enji); letter-spacing: 0; padding-top: 0.1rem; }
+.hit__title { font-size: 1.05rem; margin: 0 0 0.15rem; font-weight: 600; }
+.hit__by { font-size: 0.82rem; color: var(--muted); margin: 0 0 0.6rem; }
+.hit__snip {
+  margin: 0; padding: 0.7rem 0.9rem; background: #fffdf7; border: 1px solid var(--line);
+  font-size: 0.9rem; line-height: 1.95; color: var(--sumi-soft);
+}
+.hit__snip cite { display: block; margin-top: 0.4rem; font-size: 0.74rem; color: var(--muted); font-style: normal; }
+.hit__links { margin: 0.5rem 0 0; font-size: 0.8rem; }
+
+/* ---- 棚 ---- */
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.9rem; margin: 1.2rem 0 0; padding: 0; list-style: none; }
+.shelf li { border: 1px solid var(--line); background: #fffdf7; padding: 0.8rem 0.9rem; }
+.shelf__label { font-size: 0.92rem; }
+.shelf__count { font-size: 0.78rem; color: var(--muted); }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+th, td { border-bottom: 1px solid var(--line); padding: 0.5rem 0.6rem; text-align: left; vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.08em; }
+
+.scroller { overflow-x: auto; }
+
+/* fleet: fixed footer */
+.site-footer {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: var(--paper); border-top: 1px solid var(--line);
+  font-size: 0.78rem; color: var(--muted); z-index: 20;
+}
+.site-footer__inner {
+  max-width: var(--wrap); margin: 0 auto; padding: 0.55rem 1.5rem;
+  display: flex; flex-wrap: wrap; gap: 0.2rem 0.85rem; align-items: center;
+}
+/* 先頭以外のリンクの前に区切りを置く。あいだに著作権表示が挟まっても並びが崩れない */
+.site-footer__inner > a:not(:first-of-type)::before {
+  content: "・"; margin-right: 0.85rem; color: var(--line);
+}
+.site-footer__copy { margin-left: -0.6rem; }
+.site-footer__fiction { width: 100%; margin: 0; color: var(--muted); font-size: 0.72rem; }
+.site-footer a { color: var(--muted); }
+
+@media (max-width: 40rem) {
+  body { padding-bottom: 7.5rem; }
+  .masthead nav { margin-left: 0; width: 100%; }
+  .hit { grid-template-columns: 2rem 1fr; }
+  .kotodoi__form button { padding: 0 0.9rem; letter-spacing: 0.1em; }
+}
+
+/* 店構えの図。写真の代わりなので、幅いっぱいに置いて上に余白を作らない */
+.noren { display: block; width: 100%; max-width: 38rem; height: auto; margin: 0 auto 1.6rem; }

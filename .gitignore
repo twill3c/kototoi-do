@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+logs/*.log
+# 埋め込みの中間生成物。索引そのものは public/kotodoi/ に置いて配る
+data/calib/
+data/embed/
+data/static/
+data/local-full/
+data/model-src/
+# 索引は最終版だけを載せる(較正用の暫定版を混ぜない)
