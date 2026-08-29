@@ -7,14 +7,14 @@ const SRC = 'node_modules/onnxruntime-web/dist';
 const OUT = 'public/kotodoi/ort';
 /*
   単スレッド運用なので jsep(WebGPU)版は要らない。10.6 MB と 20.6 MB の差は大きい。
-  ただし Transformers.js の既定は onnxruntime-web の "all" 束で、これは jsep を取りに行く。
-  next.config.ts で "onnxruntime-web/wasm" に寄せてある —— 寄せ替えが効かなくなったときに
-  黙って外へ取りに行かせないよう、jsep 版も置いておく(SPEC N-02)。
+  Transformers.js の既定は onnxruntime-web の "all" 束で jsep を取りに行くため、
+  next.config.ts で wasm 専用の束に寄せてある。
+
+  控えとして jsep 版も置く、という手は採らない。置けば、寄せ替えが壊れたときに
+  **黙って倍の量が配られる**。置かなければ壊れたと分かる —— それを
+  tests/runtime.test.ts が組み上がった束に対して確かめる。
 */
-const FILES = [
-  'ort-wasm-simd-threaded.wasm', 'ort-wasm-simd-threaded.mjs',
-  'ort-wasm-simd-threaded.jsep.wasm', 'ort-wasm-simd-threaded.jsep.mjs',
-];
+const FILES = ['ort-wasm-simd-threaded.wasm', 'ort-wasm-simd-threaded.mjs'];
 
 fs.mkdirSync(OUT, { recursive: true });
 let total = 0;
