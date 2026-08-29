@@ -75,6 +75,12 @@ export default function Kotodoi() {
         探している気分や場面を、そのまま言葉で書いてください。書名でなくて構いません。
         本文の意味が近い順に、棚から出してきます。
       </p>
+      <p className="note">
+        よく出るのは<strong>目に見えるもの</strong>を挙げた問いです —— 山、船、楽器、幽霊、食べもの。
+        「恋に破れる」「老いてゆく」のような<strong>心の在りよう</strong>は苦手にしております。
+        そういう話は、書かれているのに「恋」とも「老い」とも書いていないことが多いためです。
+        当店で実際に測った数字は<a href="/aruji/">店主</a>のところに出しております。
+      </p>
 
       <form
         className="kotodoi__form"
@@ -104,7 +110,8 @@ export default function Kotodoi() {
           そのかわり、<strong>最初の一問のときだけ</strong>、蔵書の索引 {payload.index} MB と
           読み取り機 {payload.model} MB、それを動かす仕掛け {payload.runtime} MB
           —— あわせて <strong>{payload.total} MB</strong> をお渡しします。
-          二問目からは何も受け取りません。棚を見るだけの方には一切お渡ししません。
+          二問目からあとは、お見せする十冊の抜き書きだけ(一問につき数百 KB)。
+          棚を見るだけの方には一切お渡ししません。
         </p>
       )}
 
