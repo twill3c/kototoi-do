@@ -9,6 +9,8 @@ import { search, aozoraUrl, type Index, type IndexMeta } from "@/lib/kotodoi";
 function makeIndex(vectors: number[][], own: number[], dims = 4): Index {
   const meta: IndexMeta = {
     model: "test", dims, K: 2, nChunks: own.length, snipShard: 4,
+    // 幅を 1 に固めると、量子化前の内積そのままで順位が決まる合成条件になる
+    scale: Array.from({ length: dims }, () => 1),
     works: [...new Set(own)].sort((a, b) => a - b)
       .map((w) => [`00000${w}`, `作品${w}`, `著者${w}`, "NDC 913", 1000, "000123"]),
   };
@@ -44,10 +46,22 @@ describe("search", () => {
     expect(hits[1].work).toBe(1);
   });
 
-  it("点数は量子化の倍率を戻した値になる", () => {
-    const idx = makeIndex([[127, 0, 0, 0]], [0]);
-    const hits = search(idx, Float32Array.from([1, 0, 0, 0]), 1);
-    expect(hits[0].score).toBeCloseTo(1, 6);
+  it("点数は並べるための値であって、コサインではない", () => {
+    // 索引は次元ごとに中心を抜いた int8 なので、返る値は幅を畳み込んだ内積である。
+    // 画面には出さない(F-07)。ここで確かめるのは大小関係だけが意味を持つこと。
+    const idx = makeIndex([[127, 0, 0, 0], [64, 0, 0, 0]], [0, 1]);
+    const hits = search(idx, Float32Array.from([1, 0, 0, 0]), 2);
+    expect(hits[0].score).toBeGreaterThan(hits[1].score);
+    expect(hits[0].score).toBeCloseTo(127, 4);
+  });
+
+  it("次元ごとの幅がクエリ側へ畳み込まれる", () => {
+    // 幅を第 2 次元だけ 10 倍にすると、そちらに寄ったチャンクが勝つ
+    const idx = makeIndex([[100, 0, 0, 0], [0, 20, 0, 0]], [0, 1]);
+    idx.meta.scale = [1, 10, 1, 1];
+    const hits = search(idx, Float32Array.from([1, 1, 0, 0]), 2);
+    expect(hits[0].work).toBe(1);   // 0×100=100 に対し 10×20=200
+    expect(hits[0].score).toBeCloseTo(200, 4);
   });
 
   it("topK より多くは返さない", () => {

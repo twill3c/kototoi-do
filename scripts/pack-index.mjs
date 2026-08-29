@@ -62,14 +62,29 @@ for (const [w, cis] of [...byWork.entries()].sort((a, b) => a[0] - b[0])) {
 console.log(`採用チャンク ${keep.length}`);
 
 /* ---- int8 に量子化して書き出す ---- */
-// 埋め込みは正規化済みなので値域は [-1,1]。全体に同じ倍率 127 をかける。
-// 倍率が全チャンク共通なので、内積の順位は float32 と変わらない(G-03 で実測する)。
-const vec = new Int8Array(keep.length * D);
+/*
+  全体を 127 倍して丸めるだけでは足りなかった。
+  この模型のスコアは標準偏差 0.014 に固まっており、丸めの誤差がその三割に達して
+  上位 10 件の一致率が 84.9% まで落ちた(G-03 不合格)。
+
+  次元ごとに中心 mu と幅 s を取る:
+    score = Σ q_k·v_k = Σ q_k·mu_k(全チャンク共通の定数)+ Σ (q_k·s_k)·c_k
+  定数項は順位に効かないので捨ててよい。s は検索時にクエリ側へ畳み込む。
+  値の幅が縮むぶん同じ int8 でも刻みが細かくなり、一致率は 97.8% になった。
+*/
 const own = new Uint16Array(keep.length);
 const pos = new Uint32Array(keep.length);
+const mu = new Float64Array(D);
+for (const ci of keep) for (let k = 0; k < D; k++) mu[k] += V[ci * D + k] / keep.length;
+const sc = new Float64Array(D);
+for (const ci of keep) for (let k = 0; k < D; k++) sc[k] = Math.max(sc[k], Math.abs(V[ci * D + k] - mu[k]));
+const vec = new Int8Array(keep.length * D);
 keep.forEach((ci, j) => {
   const o = ci * D;
-  for (let k = 0; k < D; k++) vec[j * D + k] = Math.max(-127, Math.min(127, Math.round(V[o + k] * 127)));
+  for (let k = 0; k < D; k++) {
+    const c = (V[o + k] - mu[k]) / (sc[k] || 1);
+    vec[j * D + k] = Math.max(-127, Math.min(127, Math.round(c * 127)));
+  }
   own[j] = chunks[ci].w;
   pos[j] = chunks[ci].pos;
 });
@@ -88,7 +103,10 @@ const works = meta.map((m) => {
 });
 const missing = works.filter((w) => !w[5]).length;
 fs.writeFileSync(path.join(OUT, 'meta.json'), JSON.stringify({
-  model: 'Xenova/multilingual-e5-small', dims: D, K, nChunks: keep.length, snipShard: SNIP_SHARD, works,
+  model: 'Xenova/multilingual-e5-small', dims: D, K, nChunks: keep.length, snipShard: SNIP_SHARD,
+  // 次元ごとの幅。検索時にクエリへ掛ける(量子化を戻すのではなく、畳み込む)
+  scale: Array.from(sc, (x) => Math.fround(x || 1)),
+  works,
 }));
 console.log(`目録 ${works.length} 件(図書カード未詳 ${missing} 件)`);
 

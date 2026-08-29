@@ -13,6 +13,7 @@ export type IndexMeta = {
   K: number;
   nChunks: number;
   snipShard: number; // 何作ごとに一節ファイルをまとめてあるか
+  scale: number[];   // 次元ごとの量子化の幅。クエリ側へ畳み込む(G-03)
   works: WorkRow[];
 };
 
@@ -47,8 +48,12 @@ export async function loadIndex(onProgress?: (frac: number, label: string) => vo
 
 /**
  * 作品ごとに最良のチャンクを採る(max プーリング)。
- * int8 のまま内積を取る — 量子化は全チャンクに同じ倍率でかかっているので、
- * 順位は float32 と変わらない(SPEC G-03 で実測して確かめる)。
+ *
+ * 索引は次元ごとに中心を抜いて幅で割った int8 である。もとの内積は
+ *   Σ q_k·v_k = Σ q_k·mu_k + Σ (q_k·s_k)·c_k
+ * で、第一項は全チャンク共通の定数なので順位に効かない。
+ * よって幅 s をクエリに掛けてから int8 と内積を取れば、順位はそのまま出る。
+ * 返す score は**並べるための値**であって、コサインでも確からしさでもない(F-07)。
  */
 export function search(idx: Index, q: Float32Array, topK = 12): Hit[] {
   const D = idx.meta.dims;
@@ -56,10 +61,12 @@ export function search(idx: Index, q: Float32Array, topK = 12): Hit[] {
   const bestScore = new Float32Array(idx.meta.works.length).fill(-Infinity);
   const bestChunk = new Int32Array(idx.meta.works.length).fill(-1);
   const { vec, own } = idx;
+  const qs = new Float32Array(D);
+  for (let k = 0; k < D; k++) qs[k] = q[k] * idx.meta.scale[k];
   for (let c = 0; c < n; c++) {
     let s = 0;
     const o = c * D;
-    for (let k = 0; k < D; k++) s += q[k] * vec[o + k];
+    for (let k = 0; k < D; k++) s += qs[k] * vec[o + k];
     const w = own[c];
     if (s > bestScore[w]) { bestScore[w] = s; bestChunk[w] = c; }
   }
@@ -71,7 +78,7 @@ export function search(idx: Index, q: Float32Array, topK = 12): Hit[] {
     // 同じ作品のチャンクは連続して並んでいる。作品内での何本目かを数える
     let first = c;
     while (first > 0 && own[first - 1] === w) first--;
-    return { work: w, score: bestScore[w] / 127, chunk: c, chunkInWork: c - first };
+    return { work: w, score: bestScore[w], chunk: c, chunkInWork: c - first };
   });
 }
 
