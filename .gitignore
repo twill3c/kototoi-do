@@ -11,3 +11,5 @@ data/static/
 data/local-full/
 data/model-src/
 # 索引は最終版だけを載せる(較正用の暫定版を混ぜない)
+
+.vercel

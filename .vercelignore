@@ -1,0 +1,6 @@
+# 先頭を固定しないと src/data まで巻き込む(loop_001 で踏んだ)
+/node_modules
+/data
+/logs
+/.next
+/out

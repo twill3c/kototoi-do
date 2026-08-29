@@ -70,3 +70,20 @@ if (!built) {
     }
   });
 });
+
+describe("フッタ", () => {
+  const files = fs.existsSync(OUT) ? walk(OUT).filter((f) => f.endsWith(".html")) : [];
+  it.runIf(files.length > 0)("仮のリンクを出荷していない", () => {
+    const bad = files.filter((f) => /PLACEHOLDER/.test(fs.readFileSync(f, "utf8")))
+      .map((f) => path.relative(OUT, f));
+    expect(bad).toEqual([]);
+  });
+  it.runIf(files.length > 0)("規約の 5 項目が全ページに揃っている", () => {
+    for (const f of files) {
+      const t = fs.readFileSync(f, "utf8");
+      for (const label of ["MIT License", "GitHub", "言問堂の歩き方", "言問堂の設計図", "App Menu"]) {
+        expect(t, `${path.relative(OUT, f)} に「${label}」が無い`).toContain(label);
+      }
+    }
+  });
+});
