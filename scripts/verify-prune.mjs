@@ -17,7 +17,7 @@ const JP_QUERIES = [
   '恋に破れる話', '東京の下町', '古い家と庭', '別れた人のこと',
 ];
 // 刈った範囲。ここが落ちるのは想定どおりで、ゲートの対象にしない。
-const OUT_OF_SCOPE = ['молодость', 'a story about the sea'];
+const OUT_OF_SCOPE = ['молодость', 'a story about the sea'];  // text-hygiene:allow
 
 async function load(local) {
   env.allowRemoteModels = !local;
