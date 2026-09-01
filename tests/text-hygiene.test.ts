@@ -36,12 +36,20 @@ const FILES = [
 
 const rel = (f: string) => path.relative(process.cwd(), f).split(path.sep).join("/");
 
+// 行単位の許可印。`harness/text_hygiene.py` は同じ印を既に使っている(検出器は
+// 探している文字を書かなければ探せないし、陽性対照の語も持たねばならない)。
+// **ファイルごと許すより狭い** —— 印の無い行は同じファイルの中でも捕まる。
+// 2026-09-01 まで TS 側だけがこの印を見ておらず、Python 側の検出器を丸ごと
+// 誤検出していた(印は付いていたのに読んでいなかった)。
+const ALLOW_MARKER = "text-hygiene" + ":allow";
+
 function scan(re: RegExp): string[] {
   const bad: string[] = [];
   for (const f of FILES) {
     const r = rel(f);
     if (r in ALLOWED) continue;
     fs.readFileSync(f, "utf8").split("\n").forEach((line, i) => {
+      if (line.includes(ALLOW_MARKER)) return;
       const m = line.match(re);
       if (m) bad.push(`${r}:${i + 1} ${m.join("")}`);
     });
