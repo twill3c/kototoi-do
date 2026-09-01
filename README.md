@@ -58,4 +58,8 @@ npm run calibrate data/calib
 
 ## ライセンス
 
-MIT License © 2026 坂田哲朗
+コードは MIT License © 2026 坂田哲朗([LICENSE](LICENSE))。
+
+出荷物には第三者のものが二つ入っている —— `public/kotodoi/model/` の埋め込み模型
+(intfloat/multilingual-e5-small・**MIT**)と、`public/kotodoi/s/` の青空文庫本文
+(保護期間満了作品)。出所・取得経路・加工内容は [NOTICE](NOTICE) に記載する。
