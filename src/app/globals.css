@@ -156,3 +156,12 @@ th { color: var(--muted); font-weight: 600; font-size: 0.8rem; letter-spacing: 0
 
 /* 店構えの図。写真の代わりなので、幅いっぱいに置いて上に余白を作らない */
 .noren { display: block; width: 100%; max-width: 38rem; height: auto; margin: 0 auto 1.6rem; }
+
+/* fleet: フッタ区切り。規約の並びの「・」。CSS の ::before では innerText に出ず
+   検品器から見えないので、HTML 側に文字として置いてある。ここは色と詰めだけ。 */
+.fsep {
+  color: currentColor;
+  opacity: 0.45;
+  margin: 0 -0.3rem;
+  user-select: none;
+}
