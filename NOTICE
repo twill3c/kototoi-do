@@ -1,0 +1,45 @@
+NOTICE — kototoi-do(言問堂)
+
+このアプリは、閲覧者の端末の中だけで検索を動かすために、**第三者の埋め込み模型と
+青空文庫の本文**を配布物に含みます。
+
+--------------------------------------------------------------------
+埋め込み模型
+--------------------------------------------------------------------
+
+  同梱先: public/kotodoi/model/
+          config.json / tokenizer.json / tokenizer_config.json /
+          onnx/model_quantized.onnx
+  原本:   https://huggingface.co/Xenova/multilingual-e5-small
+          (ONNX 変換版。base_model は intfloat/multilingual-e5-small)
+  取得:   scripts/fetch-model.mjs(HuggingFace resolve/main から取得)
+  加工:   語彙を刈っている(内訳は public/kotodoi/model/prune.json)
+
+  ライセンス: **MIT**
+    intfloat/multilingual-e5-small のモデルカードは `license: mit` を宣言している
+    (2026-09-02 確認)。Xenova の ONNX 版はモデルカードに license 欄を持たないが、
+    base_model を intfloat/multilingual-e5-small と明記しており、重みはその派生である。
+
+  **原本に LICENSE ファイルは無く、著作権者名の表示も置かれていない**
+  (https://huggingface.co/intfloat/multilingual-e5-small/raw/main/LICENSE は 404)。
+  MIT が求める著作権表示を転記しようにも原本に無いため、
+  取得元 URL・base_model・取得経路(fetch-model.mjs)・加工内容(prune.json)を
+  明記することをもって表示に代える。再配布する場合はこの NOTICE ごと引き継ぐこと。
+
+--------------------------------------------------------------------
+本文・目録(青空文庫)
+--------------------------------------------------------------------
+
+  同梱先: public/kotodoi/s/*.json(本文の断片)、public/kotodoi/meta.json(目録)
+  出典:   青空文庫 https://www.aozora.gr.jp/
+          正規化済みのテキストを姉妹プロジェクト aozora-sakuin から借りている
+
+  収録は**著作権保護期間が満了した作品のみ**。作品ごとの底本・入力者・校正者は
+  青空文庫の各図書カードに記載があり、画面から図書カードへ辿れるようにしている。
+  断片への切り出しと埋め込みの算出は本アプリによる加工であり、その責任は本アプリにある。
+
+--------------------------------------------------------------------
+本アプリ自身のコード
+--------------------------------------------------------------------
+
+LICENSE を参照(MIT)。店構え・検索・較正はすべて自作。
